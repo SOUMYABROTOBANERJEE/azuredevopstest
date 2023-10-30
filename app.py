@@ -22,7 +22,7 @@ app.layout = html.Div(children=[
     html.H1(children='Hello'),
 
     html.Div(children='''
-        Dash: A web application framework for your data.
+        Dash1: A web application framework for your data.
     '''),
 
     dcc.Graph(
