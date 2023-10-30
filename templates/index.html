@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task List</title>
+</head>
+<body>
+    <h1>Task List</h1>
+    <form method="post" action="/add_task">
+        <input type="text" name="description" placeholder="Add a new task" required>
+        <button type="submit">Add</button>
+    </form>
+    <ul>
+        {% for task in tasks %}
+            <li>
+                <span style="{% if task[2] %}text-decoration: line-through;{% endif %}">
+                    {{ task[1] }}
+                </span>
+                <a href="/toggle_task/{{ task[0] }}">Toggle</a>
+                <a href="/delete_task/{{ task[0] }}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
