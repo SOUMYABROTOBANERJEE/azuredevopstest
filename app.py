@@ -4,3 +4,6 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return f"<h1>Hello world, Flask on Azure Web App!</h1><hr/>Current clock time is: {datetime.datetime.utcnow()}"
+
+if __name__ == '__main__':
+   app.run()
