@@ -4,3 +4,4 @@ streamlit
 plotly
 dash
 numpy
+gunicorn
