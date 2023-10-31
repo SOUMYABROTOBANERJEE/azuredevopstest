@@ -2,4 +2,5 @@ flask
 pandas
 streamlit
 plotly
+dash
 numpy
