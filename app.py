@@ -1,63 +1,51 @@
-# from flask import Flask
-# import datetime
-# app = Flask(__name__)
-# @app.route("/")
-# def home():
-#     return f"<h1>Hello, Flask on Azure Web App!</h1><hr/>Current clock time is: {datetime.datetime.utcnow()}"
-
-# if __name__ == '__main__':
-#    app.run()
-
-from flask import Flask, render_template, request, redirect, url_for
+import streamlit as st
 import pandas as pd
+import numpy as np
+import plotly.express as px
 
-app = Flask(__name__)
+# Load a sample dataset (you can replace this with your own data)
+@st.cache_data
+def load_data():
+    data = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminderDataFiveYear.csv')
+    return data
 
-# CSV file configuration
-csv_file = 'tasks.csv'
+data = load_data()
 
-# def create_csv():
-#     pd.DataFrame(columns=['id', 'description', 'done']).to_csv(csv_file, index=False)
+# Sidebar for data selection
+st.sidebar.header('Data Selection')
+year = st.sidebar.selectbox('Select Year', data['year'].unique())
 
-@app.route('/')
-def index():
-    # create_csv()  # Create the CSV file if it doesn't exist
-    tasks = pd.read_csv(csv_file)
-    return render_template('index.html', tasks=tasks.values)
+filtered_data = data[data['year'] == year]
 
-@app.route('/add_task', methods=['POST'])
-def add_task():
-    description = request.form['description']
-    tasks = pd.read_csv(csv_file)
+# Display the data table
+st.write(f"## Data for {year}")
+st.write(filtered_data)
 
-    # Find the maximum ID value and increment it to ensure uniqueness
-    max_id = tasks['id'].max() if not tasks.empty else 0
-    new_id = max_id + 1
+# Data Filtering
+st.subheader('Data Filtering')
+continent = st.multiselect('Select Continent(s)', filtered_data['continent'].unique())
+filtered_data = filtered_data[filtered_data['continent'].isin(continent)]
 
-    new_task = pd.DataFrame({'id': [new_id], 'description': [description], 'done': [0]})
-    tasks = tasks.append(new_task, ignore_index=True)
-    tasks.to_csv(csv_file, index=False)
-    return redirect(url_for('index'))
+# Data Statistics
+st.subheader('Data Statistics')
+st.write(filtered_data.describe())
 
+# Data Visualization
+st.subheader('Data Visualization')
+fig = px.scatter(filtered_data, x='gdpPercap', y='lifeExp', size='pop', color='country', hover_name='country', log_x=True, size_max=60)
+st.plotly_chart(fig)
 
-@app.route('/toggle_task/<int:task_id>')
-def toggle_task(task_id):
-    tasks = pd.read_csv(csv_file)
-    task = tasks.loc[tasks['id'] == task_id]
+# Interactive Component
+st.subheader('Interactive Component')
+selected_country = st.selectbox('Select a Country', filtered_data['country'].unique())
+st.write(f"You selected {selected_country}")
 
-    if not task.empty:
-        tasks.at[task.index[0], 'done'] = int(not task['done'].values[0])
-        tasks.to_csv(csv_file, index=False)
+# Advanced Customization
+st.markdown('## Advanced Customization')
+if st.button('Click Me!'):
+    st.write('You clicked the button!')
 
-    return redirect(url_for('index'))
+# Conclusion
+st.markdown('## Conclusion')
+st.write('This is a complicated Streamlit application with data analysis, visualization, and interactivity.')
 
-@app.route('/delete_task/<int:task_id>')
-def delete_task(task_id):
-    tasks = pd.read_csv(csv_file)
-    if task_id in tasks['id'].values:
-        tasks = tasks[tasks['id'] != task_id]
-        tasks.to_csv(csv_file, index=False)
-    return redirect(url_for('index'))
-
-if __name__ == '__main__':
-    app.run()
