@@ -86,6 +86,6 @@ def update_data(year, continents, selected_country):
     )
     
     return data_table, data_statistics, fig, f"You selected {selected_country}"
-
+server = app.server
 if __name__ == '__main__':
-    app.run_server(debug=True,port = 8000)
+    app.run_server(debug=True)
