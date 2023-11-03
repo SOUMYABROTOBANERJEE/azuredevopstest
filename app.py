@@ -12,7 +12,7 @@ def load_data():
 data = load_data()
 
 # Sidebar for data selection
-st.sidebar.header('Data Selection')
+st.sidebar.header('Data Select')
 year = st.sidebar.selectbox('Select Year', data['year'].unique())
 
 filtered_data = data[data['year'] == year]
